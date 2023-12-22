@@ -2,6 +2,7 @@
 
 #include "DroneBase.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -11,7 +12,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "HealthComponent.h"
+#include "WeaponComponent.h"
 #include <Kismet/GameplayStatics.h>
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ADroneBase::ADroneBase()
@@ -20,8 +23,8 @@ ADroneBase::ADroneBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set default values for movement and rotation
-	MoveSpeed = 1000.0f;
-	RotationSpeed = 100.0f;
+	//MoveSpeed = 1000.0f;
+	//RotationSpeed = 100.0f;
 
 	// Create a root scene component
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
@@ -34,9 +37,10 @@ ADroneBase::ADroneBase()
 	// Create a floating movement component
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
 
-	// Create a camera component and attach it to the root component
+	
+	// Create a camera component and attach it to the SpringArm
 	DroneCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("DroneCamera"));
-	DroneCamera->SetupAttachment(RootSceneComponent);
+	DroneCamera->SetupAttachment(DroneMesh);
 
 	// Set the default camera position and rotation
 	DroneCamera->SetRelativeLocation(FVector(-500.0f, 0.0f, 200.0f));
@@ -47,6 +51,7 @@ ADroneBase::ADroneBase()
 	CollisionBox->SetupAttachment(RootSceneComponent);
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -93,7 +98,7 @@ void ADroneBase::SetupPlayerInputComponent(class UInputComponent *PlayerInputCom
 			// Bind the actions
 			PEI->BindAction(InputMoveHorizontal, ETriggerEvent::Triggered, this, &ADroneBase::MoveHorizontal);
 			PEI->BindAction(InputMoveVertical, ETriggerEvent::Triggered, this, &ADroneBase::MoveVertical);
-			PEI->BindAction(InputRotate, ETriggerEvent::Triggered, this, &ADroneBase::Rotate);
+			PEI->BindAction(InputRotate, ETriggerEvent::Triggered, this, &ADroneBase::RotationalMovement);
 		}
 		else
 		{
@@ -105,23 +110,56 @@ void ADroneBase::SetupPlayerInputComponent(class UInputComponent *PlayerInputCom
 		UE_LOG(LogTemp, Error, TEXT("'%s' Failed to find an PlayerController!"), *GetNameSafe(this));
 	}
 }
-
-void ADroneBase::MoveHorizontal(const FInputActionValue &Value)
+void ADroneBase::MoveHorizontal(const FInputActionValue& Value)
 {
-	auto ValueVector = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Display, TEXT("Horizontal movement X: %f. Y: %f."), ValueVector.X, ValueVector.Y);
+
+	constexpr float HorizontalSpeed = 500;
+
+	// Отримання компонент вектора
+	FVector2D MovementInput = Value.Get<FVector2D>();
+
+	if (!FMath::IsNearlyZero(MovementInput.X) || !FMath::IsNearlyZero(MovementInput.Y))
+	{
+		FVector RightVector = GetActorRightVector();
+		FVector ForwardVector = GetActorForwardVector();
+
+		// Зміщення дрона вздовж правого та переднього векторів
+		FVector MovementDirection = RightVector * MovementInput.X + ForwardVector * (MovementInput.Y * -1);
+
+		// Змінення позиції дрона
+		AddMovementInput(MovementDirection.GetSafeNormal());
+	}
 }
 
-void ADroneBase::MoveVertical(const FInputActionValue &Value)
+
+void ADroneBase::MoveVertical(const FInputActionValue& Value)
 {
-	auto ValueVector = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Display, TEXT("Vertical movement X: %f. Y: %f."), ValueVector.X, ValueVector.Y);
+	float VerticalMovementScale = Value.Get<float>();
+
+	if (!FMath::IsNearlyZero(VerticalMovementScale))
+	{
+		FVector UpVector = FVector::UpVector;
+		AddMovementInput(UpVector, VerticalMovementScale);
+	}
 }
 
-void ADroneBase::Rotate(const FInputActionValue &Value)
+void ADroneBase::RotationalMovement(const FInputActionValue& Value)
 {
-	auto ValueVector = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Display, TEXT("Rotate movement X: %f. Y: %f."), ValueVector.X, ValueVector.Y);
+	// Кут обертання дрона
+
+	constexpr float RotationalSpeed = 100;
+
+	float RotationMovementScale = Value.Get<float>();
+
+	if (!FMath::IsNearlyZero(RotationMovementScale))
+	{
+		float YawRotation = RotationMovementScale * RotationalSpeed * GetWorld()->GetDeltaSeconds();
+
+		// Змінення обертання дрона
+		AddActorLocalRotation(FRotator(0.f, YawRotation, 0.f));
+	}
+
+
 }
 
 UHealthComponent *ADroneBase::GetHealthComponent() const

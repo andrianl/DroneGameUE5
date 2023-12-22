@@ -35,7 +35,7 @@ public:
 
     // Function to handle drone rotation
     UFUNCTION(BlueprintCallable, Category = "Drone")
-    void Rotate(const FInputActionValue &Value);
+    void RotationalMovement(const FInputActionValue &Value);
 
     class UHealthComponent *GetHealthComponent() const;
 
@@ -62,14 +62,6 @@ protected:
     class UInputAction *InputRotate;
 
 private:
-    // Speed of the drone movement
-    UPROPERTY(EditAnywhere, Category = "Drone")
-    float MoveSpeed;
-
-    // Speed of the drone rotation
-    UPROPERTY(EditAnywhere, Category = "Drone")
-    float RotationSpeed;
-
     // Scene component as the root for the drone
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
     class USceneComponent *RootSceneComponent;
@@ -89,6 +81,12 @@ private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
     class UCameraComponent *DroneCamera;
 
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+   // class USpringArmComponent* SpringArm;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = "true"))
     class UHealthComponent *HealthComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+    class UWeaponComponent* WeaponComponent;
 };

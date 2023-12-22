@@ -35,6 +35,10 @@
 			"SupportedTargetPlatforms": [
 				"Win64"
 			]
+		},
+		{
+			"Name": "RawInput",
+			"Enabled": true
 		}
 	]
 }
