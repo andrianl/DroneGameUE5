@@ -86,6 +86,13 @@ void AProjectileBase::OnProjectileHit(UPrimitiveComponent *HitComponent, AActor 
         // OtherActor is not an instance of ADroneBase
         // Add alternative logic here if needed
     }
+
+    Destroy();
+}
+
+UProjectileMovementComponent* AProjectileBase::GetProjectileComponent() const
+{
+    return ProjectileMovement;
 }
 
 float AProjectileBase::DealDamage(AActor *ActorToDealDamage)

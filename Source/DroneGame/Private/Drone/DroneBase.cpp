@@ -50,6 +50,9 @@ ADroneBase::ADroneBase()
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	CollisionBox->SetupAttachment(RootSceneComponent);
 
+	DroneMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+	CollisionBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 }

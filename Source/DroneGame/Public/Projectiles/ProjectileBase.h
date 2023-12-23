@@ -32,6 +32,8 @@ public:
     void OnProjectileHit(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp,
                          FVector NormalImpulse, const FHitResult &Hit);
 
+    UFUNCTION()
+    class UProjectileMovementComponent* GetProjectileComponent() const;
     // Getter function for the damage type
     UFUNCTION(BlueprintPure, Category = "Projectile")
     TSubclassOf<class UDamageType> GetDamageType() const { return DamageTypeClass; }
