@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PickupBase.h"
+#include "Pickups/PickupBase.h"
 #include "Components/SphereComponent.h"
 
 // Sets default values

@@ -1,13 +1,13 @@
 // ProjectileBase.cpp
 
-#include "ProjectileBase.h"
+#include "Projectiles/ProjectileBase.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include <Kismet/GameplayStatics.h>
 
-#include "DroneBase.h"
-#include "HealthComponent.h"
+#include "Drone/DroneBase.h"
+#include "Components/HealthComponent.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()

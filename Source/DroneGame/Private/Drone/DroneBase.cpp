@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "DroneBase.h"
+#include "Drone/DroneBase.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -8,11 +8,11 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "InputMappingContext.h"
-#include "InputAssetData.h"
+#include "Inputs/InputAssetData.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "HealthComponent.h"
-#include "WeaponComponent.h"
+#include "Components/HealthComponent.h"
+#include "Components/WeaponComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "Kismet/KismetMathLibrary.h"
 
