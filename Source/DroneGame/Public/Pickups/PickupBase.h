@@ -25,19 +25,32 @@ public:
     virtual void Tick(float DeltaTime) override;
 
     // Implementation of the interface function
-    virtual void ApplyPickupEffects_Implementation(class AActor* ActorToApplyTo) override;
+    virtual void ApplyPickupEffects_Implementation(class AActor *ActorToApplyTo) override;
 
-private:
-    // Mesh component for the pickup
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup", meta = (AllowPrivateAccess = "true"))
-    class UStaticMeshComponent* PickupMesh;
-
-    // Collision component (sphere)
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup", meta = (AllowPrivateAccess = "true"))
-    class USphereComponent* CollisionSphere;
+    UFUNCTION()
+    class USphereComponent* GetCollisionSphere() const;
 
     // Function to handle collision events
     UFUNCTION()
     void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
         class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION()
+    void RestoreVisibilityAndCollision();
+
+private:
+    // Mesh component for the pickup
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup", meta = (AllowPrivateAccess = "true"))
+    class UStaticMeshComponent *PickupMesh;
+
+    // Collision component (sphere)
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup", meta = (AllowPrivateAccess = "true"))
+    class USphereComponent *CollisionSphere;
+
+    FTimerDelegate TimerDelegate;
+
+    FTimerHandle TimerHandle;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pickup", meta = (AllowPrivateAccess = "true"))
+    float TimeBeforeRespawn;
 };

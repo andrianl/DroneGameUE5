@@ -6,7 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, Health);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, CurrentHealth, float, MaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthZeroOrBelowSignature);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DRONEGAME_API UHealthComponent : public UActorComponent
@@ -37,6 +38,13 @@ public:
     UFUNCTION(BlueprintPure, Category = "Health")
     float GetMaxHealth() const;
 
+    // Event
+    UPROPERTY(BlueprintAssignable,Category = "Health")
+    FOnHealthChangedSignature OnHealthChanged;
+
+    UPROPERTY(BlueprintAssignable, Category = "Health")
+    FOnHealthZeroOrBelowSignature OnHealthZeroOrBelow;
+
 protected:
     // Called when the game starts
     virtual void BeginPlay() override;
@@ -47,8 +55,4 @@ private:
 
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = "true"))
     float CurrentHealth;
-
-    // Event
-    UPROPERTY(BlueprintAssignable, Category = "Health")
-    FOnHealthChangedSignature OnHealthChanged;
 };

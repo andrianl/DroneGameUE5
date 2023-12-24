@@ -16,8 +16,10 @@ public:
 	AAITurret();
 
 	UFUNCTION(BlueprintCallable)
-	void Fire(const AActor* Target);
+	void Fire(const AActor *Target);
 
+	UFUNCTION()
+	void OnHealthZeroOrBelowHandler();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -27,15 +29,20 @@ protected:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret", meta = (AllowPrivateAccess = "true"))
-	USceneComponent* SceneComponent;
+	USceneComponent *SceneComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret", meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* SkeletalMeshComponent;
+	USkeletalMeshComponent *SkeletalMeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* CollisionBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret", meta = (AllowPrivateAccess = "true"))
+	class UHealthComponent* HealthComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class ATurretProjectile> ProjectileClass;
 
 	UPROPERTY(BlueprintReadWrite, Category = Projectile)
-	FTransform ProjectileSpawnTransform;
-
+	FVector ProjectileSpawnLocation;
 };

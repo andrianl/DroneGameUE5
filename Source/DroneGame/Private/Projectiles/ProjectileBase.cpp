@@ -69,25 +69,21 @@ void AProjectileBase::InitializeProjectile(float Speed, int32 DamageAmount, TSub
 void AProjectileBase::OnProjectileHit(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp,
                                       FVector NormalImpulse, const FHitResult &Hit)
 {
-    // Check if OtherActor is an instance of ADroneBase
-    if (OtherActor->IsA(ADroneBase::StaticClass()))
-    {
-        // OtherActor is an instance of ADroneBase
-        ADroneBase *DroneActor = Cast<ADroneBase>(OtherActor);
-        if (IsValid(DroneActor))
+      // Check if OtherActor has a HealthComponent
+        UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>();
+        if (IsValid(HealthComponent))
         {
             // Add your specific logic here
-            float DealedDamage = DealDamage(DroneActor);
-            DroneActor->GetHealthComponent()->TakeDamage(DealedDamage);
+            float DealedDamage = DealDamage(OtherActor);
+            HealthComponent->TakeDamage(DealedDamage);
         }
-    }
-    else
-    {
-        // OtherActor is not an instance of ADroneBase
-        // Add alternative logic here if needed
-    }
+        else
+        {
+            // Handle the case where HealthComponent is not present in OtherActor
+            // Add alternative logic here if needed
+        }
 
-    Destroy();
+        Destroy();
 }
 
 UProjectileMovementComponent *AProjectileBase::GetProjectileComponent() const

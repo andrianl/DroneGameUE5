@@ -39,13 +39,19 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Drone")
     void Fire();
-
+    UFUNCTION()
     class UHealthComponent *GetHealthComponent() const;
+
+    UFUNCTION()
+    class UWeaponComponent* GetWeaponComponent() const;
 
 private:
     UFUNCTION()
     void OnCollisionBoxHit(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp,
                            FVector NormalImpulse, const FHitResult &Hit);
+
+    UFUNCTION()
+    void OnHealthZeroOrBelowHandler();
 
 protected:
     /* INPUTS */

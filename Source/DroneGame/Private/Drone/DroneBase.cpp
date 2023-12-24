@@ -62,6 +62,7 @@ void ADroneBase::BeginPlay()
 	Super::BeginPlay();
 
 	CollisionBox->OnComponentHit.AddDynamic(this, &ADroneBase::OnCollisionBoxHit);
+	HealthComponent->OnHealthZeroOrBelow.AddDynamic(this, &ADroneBase::OnHealthZeroOrBelowHandler);
 }
 
 // Called every frame
@@ -118,7 +119,6 @@ void ADroneBase::MoveHorizontal(const FInputActionValue &Value)
 
 	constexpr float HorizontalSpeed = 500;
 
-	// ��������� ��������� �������
 	FVector2D MovementInput = Value.Get<FVector2D>();
 
 	if (!FMath::IsNearlyZero(MovementInput.X) || !FMath::IsNearlyZero(MovementInput.Y))
@@ -126,10 +126,8 @@ void ADroneBase::MoveHorizontal(const FInputActionValue &Value)
 		FVector RightVector = GetActorRightVector();
 		FVector ForwardVector = GetActorForwardVector();
 
-		// ������� ����� ������ ������� �� ���������� �������
 		FVector MovementDirection = RightVector * MovementInput.X + ForwardVector * (MovementInput.Y * -1);
 
-		// ������� ������� �����
 		AddMovementInput(MovementDirection.GetSafeNormal());
 	}
 }
@@ -147,19 +145,10 @@ void ADroneBase::MoveVertical(const FInputActionValue &Value)
 
 void ADroneBase::RotationalMovement(const FInputActionValue &Value)
 {
-	// ��� ��������� �����
-
-	constexpr float RotationalSpeed = 100;
-
-	float RotationMovementScale = Value.Get<float>();
-
-	if (!FMath::IsNearlyZero(RotationMovementScale))
-	{
-		float YawRotation = RotationMovementScale * RotationalSpeed * GetWorld()->GetDeltaSeconds();
-
-		// ������� ��������� �����
-		AddActorLocalRotation(FRotator(0.f, YawRotation, 0.f));
-	}
+	FVector2D RotationMovementScale = Value.Get<FVector2D>();
+	float YRotation = RotationMovementScale.X;
+	float XRotation = RotationMovementScale.Y;
+	AddActorLocalRotation(FRotator(XRotation, YRotation, 0.f));
 }
 
 void ADroneBase::Fire()
@@ -175,8 +164,28 @@ UHealthComponent *ADroneBase::GetHealthComponent() const
 	return HealthComponent;
 }
 
+UWeaponComponent* ADroneBase::GetWeaponComponent() const
+{
+	return WeaponComponent;
+}
+
 void ADroneBase::OnCollisionBoxHit(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp,
 								   FVector NormalImpulse, const FHitResult &Hit)
 {
 	UE_LOG(LogTemp, Display, TEXT("CollisionHit"));
+}
+
+void ADroneBase::OnHealthZeroOrBelowHandler()
+{
+	// Ваш код, який виконується, коли здоров'я стає 0 або менше.
+	// Наприклад, ви можете реалізувати логіку знищення дрону або будь-яку іншу дію.
+
+	// Один із можливих варіантів - видалення дрону
+	bool IsDestroyed = Destroy();
+
+	DisableInput(nullptr);
+
+	// Вимкнення колізій та фізичної взаємодії
+	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MovementComponent->SetActive(false);
 }

@@ -7,15 +7,14 @@
 #include "TurretProjectile.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class DRONEGAME_API ATurretProjectile : public AProjectileBase
 {
 	GENERATED_BODY()
-	
 
 public:
 	UFUNCTION()
-	void FireInDirection(const FVector& ShootDirection) const;
+	void FireInDirection(const FVector &ShootDirection) const;
 };

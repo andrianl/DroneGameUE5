@@ -7,14 +7,14 @@
 #include "BTTask_InterpRotate.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class DRONEGAME_API UBTTask_InterpRotate : public UBTTask_RotateToFaceBBEntry
 {
 	GENERATED_BODY()
-	
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
 
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual void OnGameplayTaskActivated(UGameplayTask &Task) override;
+
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory) override;
 };

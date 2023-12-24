@@ -14,7 +14,7 @@ class UPickupInterface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class DRONEGAME_API IPickupInterface
 {
@@ -24,5 +24,5 @@ class DRONEGAME_API IPickupInterface
 public:
 	// Pure virtual function for applying pickup effects
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pickup")
-	void ApplyPickupEffects(class AActor* ActorToApplyTo);
+	void ApplyPickupEffects(class AActor *ActorToApplyTo);
 };

@@ -7,16 +7,16 @@
 #include "BTTask_Fire.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class DRONEGAME_API UBTTask_Fire : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
-	UBTTask_Fire(const FObjectInitializer& ObjectInitializer);
 
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	UBTTask_Fire(const FObjectInitializer &ObjectInitializer);
 
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory) override;
+
+	virtual void OnGameplayTaskActivated(UGameplayTask &Task) override;
 };

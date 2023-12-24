@@ -1,8 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Turret/AITurret.h"
 #include "Projectiles/TurretProjectile.h"
+#include "Components/BoxComponent.h"
+#include "Components/HealthComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
 AAITurret::AAITurret()
@@ -15,32 +18,42 @@ AAITurret::AAITurret()
 
     SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
     SkeletalMeshComponent->SetupAttachment(RootComponent);
+
+    CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+    CollisionBox->SetupAttachment(SceneComponent);
+
+    CollisionBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+
+    HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 }
 
-void AAITurret::Fire(const AActor* Target)
+void AAITurret::Fire(const AActor *Target)
 {
     if (IsValid(ProjectileClass) && IsValid(Target))
     {
         // Calculate the direction to the target.
-        FVector LaunchDirection = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+        FVector StartLocation = ProjectileSpawnLocation;
+        FVector TargetLocation = Target->GetActorLocation();
 
-        // Define the spawn location for the projectile with a randomized offset.
-        const FVector RandomMuzzleOffset = FMath::VRand() * 100.0F; // Adjust the multiplier as needed
-        const FVector SpawnLocation = GetActorLocation() + GetActorRotation().RotateVector(RandomMuzzleOffset);
+        FVector LaunchDirection = (TargetLocation - StartLocation).GetSafeNormal();;
+     
+        //const FVector SpawnLocation = GetActorLocation() + GetActorRotation().RotateVector(RandomMuzzleOffset);
+        const FVector SpawnLocation = ProjectileSpawnLocation;
 
-        // Define the spawn rotation for the projectile.
-        FRotator SpawnRotation = LaunchDirection.Rotation();
-        SpawnRotation.Pitch += 10.0F;
+        FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(StartLocation, TargetLocation);
 
         // Configure parameters for spawning the projectile.
         FActorSpawnParameters SpawnParams;
         SpawnParams.Owner = this;
         SpawnParams.Instigator = GetInstigator();
+        SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
         // Spawn the projectile and set its initial trajectory.
-        ATurretProjectile* SpawnedProjectile = GetWorld()->SpawnActor<ATurretProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+        ATurretProjectile *SpawnedProjectile = GetWorld()->SpawnActor<ATurretProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
         if (IsValid(SpawnedProjectile))
         {
+            UProjectileMovementComponent* ProjectileMovement = SpawnedProjectile->FindComponentByClass<UProjectileMovementComponent>();
+            CollisionBox->IgnoreActorWhenMoving(SpawnedProjectile, true);
             // Set the projectile's initial direction.
             SpawnedProjectile->FireInDirection(LaunchDirection);
         }
@@ -51,13 +64,16 @@ void AAITurret::Fire(const AActor* Target)
 void AAITurret::BeginPlay()
 {
     Super::BeginPlay();
-
+    HealthComponent->OnHealthZeroOrBelow.AddDynamic(this, &AAITurret::OnHealthZeroOrBelowHandler);
 }
 
 // Called every frame
 void AAITurret::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
 }
 
+void AAITurret::OnHealthZeroOrBelowHandler()
+{
+    Destroy();
+}

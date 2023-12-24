@@ -7,7 +7,7 @@
 #include "AITurretController.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class DRONEGAME_API AAITurretController : public AAIController
@@ -15,7 +15,6 @@ class DRONEGAME_API AAITurretController : public AAIController
 	GENERATED_BODY()
 
 public:
-
 	AAITurretController();
 
 	UFUNCTION()
@@ -23,8 +22,8 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	class UAIPerceptionComponent* AIPerceptionComponent;
+	class UAIPerceptionComponent *AIPerceptionComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	class UBlackboardComponent* BlackboardComponent;
+	class UBlackboardComponent *BlackboardComponent;
 };

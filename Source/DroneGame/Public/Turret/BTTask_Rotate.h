@@ -7,27 +7,27 @@
 #include "BTTask_Rotate.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class DRONEGAME_API UBTTask_Rotate : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
-	UBTTask_Rotate(const FObjectInitializer& ObjectInitializer);
+
+	UBTTask_Rotate(const FObjectInitializer &ObjectInitializer);
 
 	UPROPERTY(EditInstanceOnly)
 	FBlackboardKeySelector EnemyKey;
 
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory) override;
 
-	class AAIController* Controller;
-	class AAITurret* Turret;
+	class AAIController *Controller;
+	class AAITurret *Turret;
 
 	UPROPERTY(EditInstanceOnly)
 	float ProjectileSpeed;
 
-	void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds);
+	void TickTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory, float DeltaSeconds);
 
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
+	virtual void OnGameplayTaskActivated(UGameplayTask &Task) override;
 };

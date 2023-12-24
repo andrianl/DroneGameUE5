@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Turret/BTTask_Rotate.h"
 #include "Drone/DroneBase.h"
 #include "Turret/AITurret.h"
@@ -9,13 +8,13 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include <Kismet/KismetMathLibrary.h>
 
-UBTTask_Rotate::UBTTask_Rotate(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UBTTask_Rotate::UBTTask_Rotate(const FObjectInitializer &ObjectInitializer) : Super(ObjectInitializer)
 {
     NodeName = "Rotate";
     EnemyKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTTask_Rotate, EnemyKey), AActor::StaticClass());
 }
 
-EBTNodeResult::Type UBTTask_Rotate::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Rotate::ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory)
 {
     bNotifyTick = true;
 
@@ -30,10 +29,10 @@ EBTNodeResult::Type UBTTask_Rotate::ExecuteTask(UBehaviorTreeComponent& OwnerCom
     return EBTNodeResult::Failed;
 }
 
-void UBTTask_Rotate::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_Rotate::TickTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory, float DeltaSeconds)
 {
     // Get the enemy from the blackboard
-    ADroneBase* Enemy = Cast<ADroneBase>(Controller->GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Enemy"))));
+    ADroneBase *Enemy = Cast<ADroneBase>(Controller->GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Enemy"))));
 
     if (IsValid(Enemy))
     {
@@ -43,7 +42,7 @@ void UBTTask_Rotate::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
         FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(TurretLocation, PredictedEnemyLocation);
 
         // Set the turret's rotation without modifying pitch or roll
-        Turret->SetActorRotation(FRotator{ 0.0f, TargetRotation.Yaw, 0.0f });
+        Turret->SetActorRotation(FRotator{0.0f, TargetRotation.Yaw, 0.0f});
         FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
     }
     else
@@ -52,6 +51,6 @@ void UBTTask_Rotate::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
     }
 }
 
-void UBTTask_Rotate::OnGameplayTaskActivated(UGameplayTask& Task)
+void UBTTask_Rotate::OnGameplayTaskActivated(UGameplayTask &Task)
 {
 }

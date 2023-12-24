@@ -22,14 +22,14 @@ void UHealthComponent::BeginPlay()
 void UHealthComponent::SetHealth(const float NewHealth)
 {
     CurrentHealth = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
-    OnHealthChanged.Broadcast(CurrentHealth);
+    OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 }
 
 void UHealthComponent::SetMaxHealth(const float NewMaxHealth)
 {
     MaxHealth = FMath::Max(NewMaxHealth, 0.0f);
     CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
-    OnHealthChanged.Broadcast(CurrentHealth);
+    OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 }
 
 void UHealthComponent::TakeDamage(const float DamageAmount)
@@ -37,7 +37,13 @@ void UHealthComponent::TakeDamage(const float DamageAmount)
     if (DamageAmount > 0.0F && CurrentHealth > 0.0F)
     {
         CurrentHealth = FMath::Clamp(CurrentHealth - DamageAmount, 0.0F, MaxHealth);
-        OnHealthChanged.Broadcast(CurrentHealth);
+        OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+
+        if (FMath::IsNearlyZero(CurrentHealth) || CurrentHealth < 0.0F)
+        {
+            OnHealthZeroOrBelow.Broadcast();
+        }
+
     }
 }
 
@@ -46,7 +52,7 @@ void UHealthComponent::Heal(const float HealAmount)
     if (HealAmount > 0.0F && CurrentHealth > 0.0F)
     {
         CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.0f, MaxHealth);
-        OnHealthChanged.Broadcast(CurrentHealth);
+        OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
     }
 }
 

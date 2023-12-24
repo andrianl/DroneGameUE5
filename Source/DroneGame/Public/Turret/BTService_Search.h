@@ -7,14 +7,14 @@
 #include "BTService_Search.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class DRONEGAME_API UBTService_Search : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
-	
-	UBTService_Search(const FObjectInitializer& ObjectInitializer);
+
+	UBTService_Search(const FObjectInitializer &ObjectInitializer);
 
 	UPROPERTY(EditInstanceOnly)
 	FBlackboardKeySelector EnemyKey;
@@ -22,9 +22,9 @@ class DRONEGAME_API UBTService_Search : public UBTService_BlackboardBase
 	UPROPERTY(EditInstanceOnly)
 	float Radius = 1000;
 
-	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	virtual void TickNode(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory, float DeltaSeconds) override;
 
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
+	virtual void OnGameplayTaskActivated(UGameplayTask &Task) override;
 
-	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) override;
+	virtual void OnGameplayTaskDeactivated(UGameplayTask &Task) override;
 };
