@@ -90,7 +90,7 @@ void AProjectileBase::OnProjectileHit(UPrimitiveComponent *HitComponent, AActor 
     Destroy();
 }
 
-UProjectileMovementComponent* AProjectileBase::GetProjectileComponent() const
+UProjectileMovementComponent *AProjectileBase::GetProjectileComponent() const
 {
     return ProjectileMovement;
 }

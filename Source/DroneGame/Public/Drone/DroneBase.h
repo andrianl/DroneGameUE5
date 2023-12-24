@@ -37,6 +37,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Drone")
     void RotationalMovement(const FInputActionValue &Value);
 
+    UFUNCTION(BlueprintCallable, Category = "Drone")
+    void Fire();
+
     class UHealthComponent *GetHealthComponent() const;
 
 private:
@@ -61,6 +64,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     class UInputAction *InputRotate;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+    class UInputAction *InputFire;
+
 private:
     // Scene component as the root for the drone
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
@@ -81,12 +87,12 @@ private:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
     class UCameraComponent *DroneCamera;
 
-    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
-   // class USpringArmComponent* SpringArm;
+    // UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+    // class USpringArmComponent* SpringArm;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = "true"))
     class UHealthComponent *HealthComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-    class UWeaponComponent* WeaponComponent;
+    class UWeaponComponent *WeaponComponent;
 };

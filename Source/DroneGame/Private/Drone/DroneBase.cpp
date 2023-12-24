@@ -23,8 +23,8 @@ ADroneBase::ADroneBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set default values for movement and rotation
-	//MoveSpeed = 1000.0f;
-	//RotationSpeed = 100.0f;
+	// MoveSpeed = 1000.0f;
+	// RotationSpeed = 100.0f;
 
 	// Create a root scene component
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
@@ -37,7 +37,6 @@ ADroneBase::ADroneBase()
 	// Create a floating movement component
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
 
-	
 	// Create a camera component and attach it to the SpringArm
 	DroneCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("DroneCamera"));
 	DroneCamera->SetupAttachment(DroneMesh);
@@ -102,6 +101,7 @@ void ADroneBase::SetupPlayerInputComponent(class UInputComponent *PlayerInputCom
 			PEI->BindAction(InputMoveHorizontal, ETriggerEvent::Triggered, this, &ADroneBase::MoveHorizontal);
 			PEI->BindAction(InputMoveVertical, ETriggerEvent::Triggered, this, &ADroneBase::MoveVertical);
 			PEI->BindAction(InputRotate, ETriggerEvent::Triggered, this, &ADroneBase::RotationalMovement);
+			PEI->BindAction(InputFire, ETriggerEvent::Triggered, this, &ADroneBase::Fire);
 		}
 		else
 		{
@@ -113,12 +113,12 @@ void ADroneBase::SetupPlayerInputComponent(class UInputComponent *PlayerInputCom
 		UE_LOG(LogTemp, Error, TEXT("'%s' Failed to find an PlayerController!"), *GetNameSafe(this));
 	}
 }
-void ADroneBase::MoveHorizontal(const FInputActionValue& Value)
+void ADroneBase::MoveHorizontal(const FInputActionValue &Value)
 {
 
 	constexpr float HorizontalSpeed = 500;
 
-	// Отримання компонент вектора
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	FVector2D MovementInput = Value.Get<FVector2D>();
 
 	if (!FMath::IsNearlyZero(MovementInput.X) || !FMath::IsNearlyZero(MovementInput.Y))
@@ -126,16 +126,15 @@ void ADroneBase::MoveHorizontal(const FInputActionValue& Value)
 		FVector RightVector = GetActorRightVector();
 		FVector ForwardVector = GetActorForwardVector();
 
-		// Зміщення дрона вздовж правого та переднього векторів
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		FVector MovementDirection = RightVector * MovementInput.X + ForwardVector * (MovementInput.Y * -1);
 
-		// Змінення позиції дрона
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 		AddMovementInput(MovementDirection.GetSafeNormal());
 	}
 }
 
-
-void ADroneBase::MoveVertical(const FInputActionValue& Value)
+void ADroneBase::MoveVertical(const FInputActionValue &Value)
 {
 	float VerticalMovementScale = Value.Get<float>();
 
@@ -146,9 +145,9 @@ void ADroneBase::MoveVertical(const FInputActionValue& Value)
 	}
 }
 
-void ADroneBase::RotationalMovement(const FInputActionValue& Value)
+void ADroneBase::RotationalMovement(const FInputActionValue &Value)
 {
-	// Кут обертання дрона
+	// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 	constexpr float RotationalSpeed = 100;
 
@@ -158,11 +157,17 @@ void ADroneBase::RotationalMovement(const FInputActionValue& Value)
 	{
 		float YawRotation = RotationMovementScale * RotationalSpeed * GetWorld()->GetDeltaSeconds();
 
-		// Змінення обертання дрона
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 		AddActorLocalRotation(FRotator(0.f, YawRotation, 0.f));
 	}
+}
 
-
+void ADroneBase::Fire()
+{
+	if (IsValid(WeaponComponent))
+	{
+		WeaponComponent->Fire();
+	}
 }
 
 UHealthComponent *ADroneBase::GetHealthComponent() const

@@ -8,7 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAmmoChangedSignature);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DRONEGAME_API UWeaponComponent : public UActorComponent
 {
     GENERATED_BODY()
@@ -23,11 +23,11 @@ protected:
 
 public:
     // Called every frame
-    virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-    // Function to handle shooting
+    // ������� ��� �������
     UFUNCTION(BlueprintCallable, Category = "Weapon")
-    void Shoot();
+    void Fire();
 
     // Function to add ammo
     UFUNCTION(BlueprintCallable, Category = "Weapon")
@@ -57,4 +57,25 @@ private:
     // Maximum ammo count
     UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
     int32 MaxAmmo;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+    float FireCooldown;
+
+    // ����� ��� ���������� ����� ��������
+    bool bCanFire;
+
+    FTimerHandle FireTimerHandle;
+
+    // ������� ����� ��� ��������� ����� ������������
+    UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+    TSubclassOf<class AProjectileBase> ProjectileClass;
+
+    UPROPERTY()
+    AActor *OwnerActor;
+
+    UPROPERTY()
+    class UCameraComponent *OwnerCamera;
+
+    UFUNCTION()
+    void EnableFire();
 };

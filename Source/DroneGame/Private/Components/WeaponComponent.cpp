@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Components/WeaponComponent.h"
+#include "Projectiles/ProjectileBase.h"
+#include "Camera/CameraComponent.h"
 
 UWeaponComponent::UWeaponComponent()
 {
@@ -9,6 +10,7 @@ UWeaponComponent::UWeaponComponent()
     PrimaryComponentTick.bCanEverTick = false;
 
     // Set default values for ammo
+    bCanFire = true;
     CurrentAmmo = 0;
     MaxAmmo = 30; // Set your desired default maximum ammo value
 }
@@ -18,28 +20,52 @@ void UWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
 
+    OwnerActor = GetOwner();
+    if (IsValid(OwnerActor))
+    {
+        OwnerCamera = OwnerActor->FindComponentByClass<UCameraComponent>();
+    }
+    else
+    {
+        // ������� �� �� ���������� ������, ������� �������� ������� �� �������
+        UE_LOG(LogTemp, Warning, TEXT("Owner actor does not have a camera component."));
+    }
     // Set initial ammo to maximum
     CurrentAmmo = MaxAmmo;
+
+    GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &UWeaponComponent::EnableFire, FireCooldown, false);
 }
 
 // Called every frame
-void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-// Function to handle shooting
-void UWeaponComponent::Shoot()
+void UWeaponComponent::Fire()
 {
-    if (CurrentAmmo > 0)
+    if (IsValid(ProjectileClass) && CurrentAmmo > 0 && bCanFire)
     {
-        // Perform shooting logic here
+        if (IsValid(OwnerActor) && IsValid(OwnerCamera))
+        {
+            FVector CameraLocation = OwnerCamera->GetComponentLocation();
+            FRotator CameraRotation = OwnerCamera->GetComponentRotation();
 
-        // Decrease ammo count
-        CurrentAmmo--;
+            FActorSpawnParameters SpawnParams;
+            SpawnParams.Owner = OwnerActor;
+            SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-        // Trigger OnAmmoChanged event
-        OnAmmoChanged.Broadcast();
+            AProjectileBase *Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, CameraLocation, CameraRotation, SpawnParams);
+
+            if (IsValid(Projectile))
+            {
+                CurrentAmmo--;
+                bCanFire = false;
+                UE_LOG(LogTemp, Warning, TEXT("Drone Projectile Spawned"));
+                GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &UWeaponComponent::EnableFire, FireCooldown, false);
+                OnAmmoChanged.Broadcast();
+            }
+        }
     }
 }
 
@@ -60,4 +86,9 @@ void UWeaponComponent::SetMaxAmmo(const int32 Max)
 
     // Trigger OnAmmoChanged event
     OnAmmoChanged.Broadcast();
+}
+
+void UWeaponComponent::EnableFire()
+{
+    bCanFire = true;
 }
