@@ -6,9 +6,7 @@
 #include "Components/HealthComponent.h"
 #include "UI/CrosshairWidget.h"
 
-AMainHUD::AMainHUD()
-{
-}
+
 
 void AMainHUD::BeginPlay()
 {
