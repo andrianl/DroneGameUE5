@@ -39,10 +39,5 @@ A simple drone control game where you can pilot a drone and face an enemy turret
 
 ## Credits
 
-- Game developed by [Your Name]
-- Assets from [Asset Store]
+- Game developed by [Andrian Lutsu]
 - ...
-
-## License
-
-This project is licensed under the [License Name] - see the [LICENSE.md](LICENSE.md) file for details.
