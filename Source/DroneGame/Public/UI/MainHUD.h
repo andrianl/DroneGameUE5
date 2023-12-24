@@ -15,8 +15,6 @@ class DRONEGAME_API AMainHUD : public AHUD
 	GENERATED_BODY()
 
 public:	
-	AMainHUD();
-
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
